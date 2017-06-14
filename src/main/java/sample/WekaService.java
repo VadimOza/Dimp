@@ -1,16 +1,13 @@
 package sample;
 
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
-import weka.classifiers.meta.FilteredClassifier;
-import weka.classifiers.trees.J48;
-import weka.core.*;
+import weka.core.Instances;
 import weka.core.converters.CSVLoader;
-import weka.filters.unsupervised.attribute.Remove;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class WekaService {
 
@@ -21,7 +18,7 @@ public class WekaService {
 
     }
 
-    public Optional<String> train(File toTrain, File toTest) throws Exception {
+    public Optional<String> recognize(File toTrain, File toTest) throws Exception {
         desidion.clear();
         CSVLoader loader = new CSVLoader();
         loader.setSource(toTrain);
@@ -38,13 +35,19 @@ public class WekaService {
         // create copy
         Instances labeled = new Instances(test);
 
-
-        Classifier cls = new J48();
-        cls.buildClassifier(train);
+        MultilayerPerceptron mlp = new MultilayerPerceptron();
+//Setting Parameters
+        mlp.setLearningRate(0.3);
+        mlp.setMomentum(0.2);
+        mlp.setTrainingTime(2000);
+        mlp.setHiddenLayers("3");
+        mlp.buildClassifier(train);
+//        Classifier cls = new J48();
+//        cls.buildClassifier(train);
 
         // label instances
         for (int i = 0; i < test.numInstances(); i++) {
-            double clsLabel = cls.classifyInstance(test.instance(i));
+            double clsLabel = mlp.classifyInstance(test.instance(i));
             labeled.instance(i).setClassValue(clsLabel);
             String predClass = test.classAttribute().value((int) clsLabel);
             System.out.println(predClass);
