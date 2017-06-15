@@ -1,4 +1,4 @@
-package sample;
+package com.sample;
 
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instances;
